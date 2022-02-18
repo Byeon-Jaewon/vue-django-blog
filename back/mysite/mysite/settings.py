@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'taggit',
     'blog.apps.BlogConfig',
+    'user.apps.UserConfig',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,5 @@ TAGGIT_CASE_INSENSITIVE = True
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'user.User'
