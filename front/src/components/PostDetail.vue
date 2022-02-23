@@ -2,43 +2,43 @@
   <v-container class="grey lighten-5">
     <v-row align="center" justify="center">
       <v-col cols="12" lg="10">
-        <h1>post title</h1>
-        <p>2022-01-01, written by author</p>
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.modify_at }}, written by {{ post.owner }}</p>
       </v-col>
     </v-row>
-    <v-row align="center" justify="center">
+    <v-row align="start" justify="center">
       <v-col cols="12" sm="8" lg="7">
         <v-card class="pa-2" outlined tile>
-          <p>asdsadasd<br />brbfdffsdf <br /><br /><br /><br /><br />dffsdsf</p>
+          <p style="white-space: pre-wrap">{{ post.content }}</p>
           <div>
             <strong>TAGS:</strong>
-            <v-chip class="ma-2" color="success" outlined> python </v-chip>
-            <v-chip class="ma-2" color="success" outlined> django </v-chip>
+            <v-chip
+              class="ma-2"
+              color="success"
+              outlined
+              v-for="(tag, index) in post.tags"
+              :key="index"
+              >{{ tag }}</v-chip
+            >
           </div>
         </v-card>
       </v-col>
       <v-col cols="12" sm="4" lg="3">
         <v-card class="pa-2 mb-5" tile>
           <p>prev post</p>
-          <h2>previous post title</h2>
+          <h2 v-if="post.prev" @click="fetchPostDetail(post.prev.id)" class="my-hover">{{ post.prev.title }}</h2>
         </v-card>
         <v-card class="pa-2 mb-5" tile>
           <p>next post</p>
-          <h2>next post title</h2>
+          <h2 v-if="post.next" @click="fetchPostDetail(post.next.id)" class="my-hover">{{ post.next.title }}</h2>
         </v-card>
         <v-card class="pa-2 mb-5" tile>
           <p>tag cloud</p>
-          <v-chip class="ma-2" color="indigo" text-color="white">
+          <v-chip v-for="(tag, index) in tagCloud" :key="index" class="ma-2" color="indigo" text-color="white">
             <v-avatar left>
               <v-icon>mdi-account-circle</v-icon>
             </v-avatar>
-            python
-          </v-chip>
-          <v-chip class="ma-2" color="indigo" text-color="white">
-            <v-avatar left>
-              <v-icon>mdi-account-circle</v-icon>
-            </v-avatar>
-            django
+            {{ tag.name }}
           </v-chip>
         </v-card>
       </v-col>
@@ -47,11 +47,57 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "HelloWorld",
 
   data: () => ({
-
+    post: {},
+    tagCloud: [],
   }),
+
+  created() {
+    console.log("created()");
+    const postId=1;
+    this.fetchPostDetail(postId);
+    this.fetchTagCloud();
+  },
+
+  methods: {
+    fetchPostDetail(postId) {
+      console.log("fetchPostDetail");
+      axios
+        .get(`/api/post/${postId}/`)
+        .then((res) => {
+          console.log("POST DETAIL GET RES", res);
+          this.post = res.data;
+        })
+        .catch((err) => {
+          console.log("POST DETAIL GET ERR.RESPONSE", err);
+          alert(err.response.status + " " + err.response.statusText);
+        });
+    },
+    fetchTagCloud(){
+      console.log("fetchTagCloud");
+      axios
+        .get('/api/tag/cloud/')
+        .then((res) => {
+          console.log("TAG CLOUD GET RES", res);
+          this.tagCloud = res.data;
+          // tag.weight
+        })
+        .catch((err) => {
+          console.log("TAG CLOUD GET ERR.RESPONSE", err);
+          alert(err.response.status + " " + err.response.statusText);
+        });
+    }
+  },
 };
 </script>
+<style scoped>
+.my-hover:hover {
+  cursor: pointer;
+  font-style: italic;
+}
+</style>
