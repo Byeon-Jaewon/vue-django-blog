@@ -6,6 +6,10 @@ module.exports = defineConfig({
     'vuetify'
   ],
 
+  devServer: {
+    proxy: 'http://127.0.0.1:8000',       //xhr only
+  },
+
   outputDir: 'dist',
   publicPath: '/',
   assetsDir: 'static',
@@ -36,26 +40,25 @@ module.exports = defineConfig({
     },
   },
 
-configureWebpack: {
-  plugins: [
-    new FileManagerPlugin({
-      onStart: {
-        delete:[
-          '../back/static/**/',
-          '../back/templates/**/',
-        ]
-      },
+  configureWebpack: {
+    plugins: [
+      new FileManagerPlugin({
+        onStart: {
+          delete: [
+            '../back/static/**/',
+            '../back/templates/**/',
+          ]
+        },
 
-      onEnd: {
-        copy: [
-          { source: 'dist/static', destination: '../back/static/' },
-          { source: 'dist/favicon.ico', destination: '../back/static/img' },
-          { source: 'dist/home.html', destination: '../back/templates/' },
-          { source: 'dist/post*.html', destination: '../back/templates/blog/'}
-        ]
-      }
-    })
-  ]
-}
-
+        onEnd: {
+          copy: [
+            { source: 'dist/static', destination: '../back/static/' },
+            { source: 'dist/favicon.ico', destination: '../back/static/img' },
+            { source: 'dist/home.html', destination: '../back/templates/' },
+            { source: 'dist/post*.html', destination: '../back/templates/blog/' }
+          ]
+        }
+      })
+    ]
+  }
 })

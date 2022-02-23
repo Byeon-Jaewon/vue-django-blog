@@ -93,13 +93,14 @@
         <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
       </template>
       <template v-slot:no-data>
-        <v-btn color="primary" @click="initialize"> Reset </v-btn>
+        <v-btn color="primary" @click="fetchPostList"> Reset </v-btn>
       </template>
     </v-data-table>
   </v-container>
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "HelloWorld",
 
@@ -111,12 +112,12 @@ export default {
         text: "ID",
         align: "start",
         sortable: false,
-        value: "name",
+        value: "id",
       },
-      { text: "제목", value: "calories" },
-      { text: "요약", value: "fat" },
-      { text: "작성자", value: "carbs" },
-      { text: "수정일", value: "protein" },
+      { text: "제목", value: "title" },
+      { text: "요약", value: "description" },
+      { text: "작성자", value: "owner" },
+      { text: "수정일", value: "modify_at" },
       { text: "Actions", value: "actions", sortable: false },
     ],
     posts: [],
@@ -152,34 +153,22 @@ export default {
   },
 
   created() {
-    this.initialize();
+    this.fetchPostList();
   },
 
   methods: {
-    initialize() {
-      this.posts = [
-        {
-          name: "asdf",
-          calories: "asdsad",
-          fat: "asddasd",
-          carbs: "admin",
-          protein: "2020-01-01",
-        },
-        {
-          name: "Ice cream sandwich",
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-        },
-        {
-          name: "Eclair",
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-        },
-      ];
+    fetchPostList() {
+      console.log('fetchPostList');
+
+      axios.get('api/post/list/')
+      .then(res => {
+        console.log("post get res", res);
+        this.posts= res.data;
+      })
+      .catch(err => {
+        console.log('post get err', err.responser);
+        alert(err.response.status + ' ' + err.reponse.statusText);
+      });
     },
 
     editItem(item) {

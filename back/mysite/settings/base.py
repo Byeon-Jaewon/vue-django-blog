@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'taggit',
     'blog.apps.BlogConfig',
+    'api.apps.ApiConfig',
     'user.apps.UserConfig',
 ]
 

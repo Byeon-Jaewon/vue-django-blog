@@ -8,4 +8,5 @@ urlpatterns = [
 
     path('', views.HomeView.as_view(), name='home'),
     path('blog/', include('blog.urls')),
+    path('api/', include('api.urls')),
 ]
