@@ -37,3 +37,31 @@ def prev_next_post(obj):
         nextDict = {}
     
     return prevDict, nextDict
+
+def make_tag_cloud(qs):
+    minCount = min(tag.count for tag in qs)
+    maxCount = max(tag.count for tag in qs)
+
+    def get_weight_function(minWeight, maxWeight):
+        if minCount == maxCount:
+            factor = 1.0
+        else :
+            factor = (maxWeight - minWeight) / (maxCount - minCount)
+        
+        def func(count):
+            weight = round(minWeight + (factor * (count - minCount)))
+            return weight
+        
+        return func
+    
+    weight_function = get_weight_function(1, 3)
+    tagList = []
+    for tag in qs:
+        weight = weight_function(tag.count)
+        tagList.append({
+            'name':tag.name,
+            'count':tag.count,
+            'weight':weight,
+        })
+        
+    return tagList

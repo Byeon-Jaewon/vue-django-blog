@@ -7,4 +7,5 @@ app_name = 'api'
 urlpatterns = [
     path('post/list/', views.ApiPostListView.as_view()),
     path('post/<int:pk>/', views.ApiPostDetailView.as_view()),
+    path('tag/cloud/', views.ApiTagCloudListView.as_view()),
 ]
