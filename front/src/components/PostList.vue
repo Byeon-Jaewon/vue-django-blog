@@ -6,10 +6,13 @@
       sort-by="calories"
       class="elevation-1"
       :items-per-page="5"
+      @click:row="serverPage"
     >
       <template v-slot:top>
         <v-toolbar flat>
-          <v-toolbar-title>Post List</v-toolbar-title>
+          <v-toolbar-title>Post List
+            <span v-if="tagname" class="body-1 font-italic ml-3">(with {{tagname}} tagged)</span>
+          </v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="500px">
@@ -121,6 +124,7 @@ export default {
       { text: "Actions", value: "actions", sortable: false },
     ],
     posts: [],
+    tagname:'',
     editedIndex: -1,
     editedItem: {
       name: "",
@@ -153,6 +157,8 @@ export default {
   },
 
   created() {
+    const params = new URL(location).searchParams;
+    this.tagname = params.get('tagname');
     this.fetchPostList();
   },
 
@@ -160,7 +166,11 @@ export default {
     fetchPostList() {
       console.log('fetchPostList');
 
-      axios.get('api/post/list/')
+      let getUrl = '';
+      if (this.tagname) getUrl = `/api/post/list/?tagname=${this.tagname}`;
+      else getUrl = '/api/post/list/';
+
+      axios.get(getUrl)
       .then(res => {
         console.log("post get res", res);
         this.posts= res.data;
@@ -169,6 +179,11 @@ export default {
         console.log('post get err', err.responser);
         alert(err.response.status + ' ' + err.reponse.statusText);
       });
+    },
+
+    serverPage(item){
+      console.log("serverPage()");
+      location.href = `/blog/post/${item.id}`
     },
 
     editItem(item) {
@@ -215,3 +230,8 @@ export default {
   },
 };
 </script>
+<style scoped>
+.v-data-table >>> tbody > tr {
+  cursor: pointer;
+}
+</style>

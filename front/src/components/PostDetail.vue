@@ -13,11 +13,12 @@
           <div>
             <strong>TAGS:</strong>
             <v-chip
-              class="ma-2"
+              class="ma-2 my-hover"
               color="success"
               outlined
               v-for="(tag, index) in post.tags"
               :key="index"
+              @click="serverPage(tag)"
               >{{ tag }}</v-chip
             >
           </div>
@@ -26,15 +27,34 @@
       <v-col cols="12" sm="4" lg="3">
         <v-card class="pa-2 mb-5" tile>
           <p>prev post</p>
-          <h2 v-if="post.prev" @click="fetchPostDetail(post.prev.id)" class="my-hover">{{ post.prev.title }}</h2>
+          <h2
+            v-if="post.prev"
+            @click="fetchPostDetail(post.prev.id)"
+            class="my-hover"
+          >
+            {{ post.prev.title }}
+          </h2>
         </v-card>
         <v-card class="pa-2 mb-5" tile>
           <p>next post</p>
-          <h2 v-if="post.next" @click="fetchPostDetail(post.next.id)" class="my-hover">{{ post.next.title }}</h2>
+          <h2
+            v-if="post.next"
+            @click="fetchPostDetail(post.next.id)"
+            class="my-hover"
+          >
+            {{ post.next.title }}
+          </h2>
         </v-card>
         <v-card class="pa-2 mb-5" tile>
           <p>tag cloud</p>
-          <v-chip v-for="(tag, index) in tagCloud" :key="index" class="ma-2" :color="tag.color" text-color="white">
+          <v-chip
+            v-for="(tag, index) in tagCloud"
+            :key="index"
+            class="ma-2 my-hover"
+            :color="tag.color"
+            text-color="white"
+            @click="serverPage(tag.name)"
+          >
             <v-avatar left class="tag.color + ' darken-4'">
               {{ tag.count }}
             </v-avatar>
@@ -59,7 +79,7 @@ export default {
 
   created() {
     console.log("created()");
-    const postId=1;
+    const postId = location.pathname.split('/')[3];
     this.fetchPostDetail(postId);
     this.fetchTagCloud();
   },
@@ -78,24 +98,28 @@ export default {
           alert(err.response.status + " " + err.response.statusText);
         });
     },
-    fetchTagCloud(){
+    fetchTagCloud() {
       console.log("fetchTagCloud");
       axios
-        .get('/api/tag/cloud/')
+        .get("/api/tag/cloud/")
         .then((res) => {
           console.log("TAG CLOUD GET RES", res);
           this.tagCloud = res.data;
           // tag.weight
-          this.tagCloud.forEach(element => {
-            if (element.weight === 3) element.color = 'green';
-            else if (element.weight === 2) element.color = 'blue-grey';
-            else if (element.weight === 1) element.color = 'grey';
-          })
+          this.tagCloud.forEach((element) => {
+            if (element.weight === 3) element.color = "green";
+            else if (element.weight === 2) element.color = "blue-grey";
+            else if (element.weight === 1) element.color = "grey";
+          });
         })
         .catch((err) => {
           console.log("TAG CLOUD GET ERR.RESPONSE", err);
           alert(err.response.status + " " + err.response.statusText);
         });
+    },
+    serverPage(tagname) {
+      console.log("serverPage()");
+      location.href = `/blog/post/list/?tagname=${tagname}`;
     }
   },
 };
