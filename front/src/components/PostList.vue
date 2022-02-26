@@ -32,7 +32,7 @@
         <v-icon small class="mr-2" @click.stop="dialogOpen('update', item)">
           mdi-pencil
         </v-icon>
-        <v-icon small @click.stop="deltePost(item)"> mdi-delete </v-icon>
+        <v-icon small @click.stop="deletePost(item)"> mdi-delete </v-icon>
       </template>
       <template v-slot:no-data>
         <v-btn color="primary" @click="fetchPostList"> Reset </v-btn>
@@ -96,7 +96,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-          <v-btn color="blue darken-1" text @click="deltePostConfirm"
+          <v-btn color="blue darken-1" text @click="deletePostConfirm"
             >OK</v-btn
           >
           <v-spacer></v-spacer>
@@ -233,7 +233,7 @@ export default {
           alert(err.response.status + " " + err.response.statusText);
         });
     },
-    deltePost(item) {
+    deletePost(item) {
       console.log("deletePost()");
       if (this.me.username === 'anonymous') {
         alert("not logged in");
