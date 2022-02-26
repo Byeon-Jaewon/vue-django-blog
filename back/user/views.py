@@ -1,4 +1,4 @@
-from collections import UserDict
+from django.contrib.auth.mixins import LoginRequiredMixin, AccessMixin
 from django.contrib.auth import login, get_user, logout, update_session_auth_hash
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.utils.decorators import method_decorator
@@ -64,3 +64,20 @@ class ApiMeView(View):
                 'username' : 'anonymous'
             }
         return JsonResponse(data=userDict, safe=True, status=200)
+
+
+class MyLoginRequiredMixin(LoginRequiredMixin):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated :
+            data = {'message': 'login required(401)'}
+            return JsonResponse(data=data, safe=True, status=401)
+        return super().dispatch(request,*args, **kwargs)
+
+
+class OwnerOnlyMixin(AccessMixin):
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if request.user != self.object.owner :
+            data = {'message':'Owner only can update and delete'}
+            return JsonResponse(data=data, safe=True, status=403)
+        return super().dispatch(request,*args,**kwargs)

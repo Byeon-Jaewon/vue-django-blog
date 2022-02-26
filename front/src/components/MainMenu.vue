@@ -26,9 +26,6 @@
       <v-btn text href="/">Home</v-btn>
       <v-btn text href="/blog/post/list">Blog</v-btn>
       <v-btn text href="/admin">Admin</v-btn>
-      <v-btn text>/</v-btn>
-      <v-btn text href="/post_list.html">PostList</v-btn>
-      <v-btn text href="/post_detail.html">PostDetail</v-btn>
 
       <v-spacer></v-spacer>
       <v-menu left bottom offset-y>
@@ -40,7 +37,7 @@
           </v-btn>
         </template>
         <v-list>
-          <template v-if="me.username === 'Anonymous'">
+          <template v-if="me.username === 'anonymous'">
             <v-list-item @click="dialogOpen('login')">
               <v-list-item-title>Login</v-list-item-title>
             </v-list-item>
@@ -174,6 +171,8 @@
 
 <script>
 import axios from "axios";
+import EventBus from "./user_event_bus"
+
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFtoken";
 
@@ -185,13 +184,20 @@ export default {
       register: false,
       password_change: false,
     },
-    me: { username: "Anonymous" },
+    me: { username: 'anonymous' },
     items: [
       { title: "Dashboard", icon: "mdi-view-dashboard" },
       { title: "Photos", icon: "mdi-image" },
       { title: "About", icon: "mdi-help-box" },
     ],
   }),
+
+  watch: {
+    me(newVal) {
+      console.log("watch.me()");
+      EventBus.$emit('me_change', newVal);
+    }
+  },
 
   created() {
     this.getUserInfo();
@@ -250,7 +256,7 @@ export default {
       axios.get('/api/logout/')
       .then(() => {
         alert(`user ${this.me.username} logout.`);
-        this.me = {username:'Anonymous'};
+        this.me = {username:'anonymous'};
       }).catch((err) => {
         console.log("logout failed",err.rseponse);
       });
